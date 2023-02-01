@@ -39,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Database\Data\" />
+    <Folder Include="Areas\Database\Models\" />
+    <Folder Include="Areas\Database\Views\" />
     <Folder Include="wwwroot\lib\multiple-select\" />
   </ItemGroup>
 
