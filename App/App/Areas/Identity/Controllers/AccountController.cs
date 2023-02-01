@@ -131,7 +131,7 @@ namespace App.Areas.Identity.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid) // Nếu submit phù hợp
             {
-                var user = new AppUser { UserName = model.UserName, Email = model.Email };
+                var user = new AppUser { UserName = model.UserName, Email = model.Email, HomeAdress = "Ha Tinh" };
                 var result = await _userManager.CreateAsync(user, model.Password); // Thêm User vào _userManager của Identity
 
                 if (result.Succeeded) // Nếu thêm thành công

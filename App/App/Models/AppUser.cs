@@ -7,12 +7,12 @@ namespace App.Models
 {
     public class AppUser: IdentityUser 
     {
-          [Column(TypeName = "nvarchar")]
-          [StringLength(400)]  
-          public string HomeAdress { get; set; }
+        [Column(TypeName = "nvarchar")]
+        [StringLength(400)]
+        public string HomeAdress { get; set; } = default!;
 
-          // [Required]       
-          [DataType(DataType.Date)]
-          public DateTime? BirthDate { get; set; }
+        // [Required]       
+        [DataType(DataType.Date)]
+        public DateTime? BirthDate { get; set; }
     }
 }
