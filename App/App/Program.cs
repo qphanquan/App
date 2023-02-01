@@ -46,10 +46,11 @@ builder.Services.Configure<IdentityOptions>(options => {
     // Cấu hình đăng nhập.
     options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
     options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
 
 });
 
+// Khi người dùng phải đăng nhập [Authorize] mới được chuyển hướng đến
 builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = "/login/";
     options.LogoutPath = "/logout/";

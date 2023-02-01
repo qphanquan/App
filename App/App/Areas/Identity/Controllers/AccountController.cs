@@ -125,25 +125,25 @@ namespace App.Areas.Identity.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl)
         {
             returnUrl ??= Url.Content("~/");
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) // Nếu submit phù hợp
             {
                 var user = new AppUser { UserName = model.UserName, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password); // Thêm User vào _userManager của Identity
 
-                if (result.Succeeded)
+                if (result.Succeeded) // Nếu thêm thành công
                 {
-                    _logger.LogInformation("Đã tạo user mới.");
+                    _logger.LogInformation("Đã tạo user mới."); // THông báo
 
                     // Phát sinh token để xác nhận email
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user); // Phát sinh mã tocken dựa theo thông tin của User
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); // Để có thể đính kèm trên địa chỉ Url
 
                     // https://localhost:5001/confirm-email?userId=fdsfds&code=xyz&returnUrl=
-                    var callbackUrl = Url.ActionLink(
+                    var callbackUrl = Url.ActionLink( // Phát sinh địa chỉ URL
                         action: nameof(ConfirmEmail),
                         values: 
                             new { area = "Identity", 
@@ -151,24 +151,25 @@ namespace App.Areas.Identity.Controllers
                                   code = code},
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(model.Email, 
+                    await _emailSender.SendEmailAsync(model.Email, // Gửi email đến người dùng
                         "Xác nhận địa chỉ email",
                         @$"Bạn đã đăng ký tài khoản trên RazorWeb, 
                            hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
                            để kích hoạt tài khoản.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount) // Không cho đăng nhập
                     {
                         return LocalRedirect(Url.Action(nameof(RegisterConfirmation)));
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(user, isPersistent: false); // Đăng nhập user,  isPersistent: Thiết lập cookie
                         return LocalRedirect(returnUrl);
                     }
 
                 }
 
+                // Tạo tài khoản không thành công
                 ModelState.AddModelError(result);
             }
 
@@ -198,9 +199,9 @@ namespace App.Areas.Identity.Controllers
             {
                 return View("ErrorConfirmEmail");
             }
-            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)); // Giải mã code tocken
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "ErrorConfirmEmail");
+            return View(result.Succeeded ? "ConfirmEmail" : "ErrorConfirmEmail"); // Kiểm tra xác thực email thành công
         }
 
         //
